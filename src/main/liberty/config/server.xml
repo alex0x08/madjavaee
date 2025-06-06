@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<server description="test server">
+
+    <!-- Enable features -->
+    <!--The Liberty Maven Plugin has generated Liberty features necessary for your application in configDropins/overrides/generated-features.xml-->
+    <featureManager>
+        <feature>jakartaee-10.0</feature>
+        <!--feature>mpOpenAPI-4.0</feature-->
+        <!--feature>appSecurity-5.0</feature>
+        <feature>appAuthentication-3.0</feature>
+        <feature>restfulWS-3.1</feature>
+        <feature>jsonb</feature-->
+        <!--feature>adminCenter-1.0</feature-->
+    </featureManager>
+
+    <dataSource id="DefaultDataSource">
+        <jdbcDriver libraryRef="phlegethLib"/>
+        <properties.derby.embedded createDatabase="create" databaseName="shuggDB"/>
+        <containerAuthData password="y'hah" user="tharanak"/>
+    </dataSource>
+
+    <library id="phlegethLib">
+        <file name="${server.config.dir}/lib/global/jdbc/derby.jar"/>
+        <file name="${server.config.dir}/lib/global/jdbc/derbyshared.jar"/>
+    </library>
+
+    <basicRegistry id="basic" realm="WebRealm">
+        <user name="admin@test.org" password="admin"/>
+        <group name="admin">
+            <member name="admin"/>
+        </group>
+        <user name="admin" password="adminpwd"/>
+
+    </basicRegistry>
+
+    <administrator-role>
+        <user>admin</user>
+    </administrator-role>
+    <!--
+        To access this server from a remote client
+        add a host attribute to the following element, e.g. host="*"
+    -->
+    <httpEndpoint httpPort="9080" httpsPort="9443" id="defaultHttpEndpoint"/>
+
+    <!-- Automatically expand WAR files and EAR files -->
+    <applicationManager autoExpand="true"/>
+
+    <!-- Default SSL configuration enables trust for default certificates
+         from the Java runtime
+     -->
+    <ssl id="defaultSSLConfig" trustDefaultCerts="true"/>
+    <!--logging traceSpecification="com.ibm.ws.*=all:io.openliberty.*=all"/-->
+
+
+</server>

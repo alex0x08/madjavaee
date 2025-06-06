@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+  <!-- Defines Persistence Unit
+       We will use 2 different providers (Eclipselink & Hibernate) depend on environment,
+       so do not specifiy provider class there.
+    -->
+  <persistence-unit name="megaPU" >
+    <properties>
+      <!-- to prevent Eclipselink exceptions -->
+      <property name="eclipselink.weaving.internal" value="false"/>
+      <!-- to prevent  java.lang.NoSuchMethodError: com.Ox08.experiments.MegaBean._persistence_checkFetchedForSet(Ljava/lang/String;) -->
+      <property name="eclipselink.weaving" value="static"/>
+      <!--  'drop-create' strategy is default in Hibernate, so no need to specify  -->
+      <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+      <!-- to see JPA statistics in Wildfly
+      <property name="hibernate.generate_statistics" value="true"/>
+      -->
+    </properties>
+  </persistence-unit>
+</persistence>

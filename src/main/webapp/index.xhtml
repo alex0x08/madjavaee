@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      encoding="UTF-8">
+    <f:view xmlns="http://www.w3.org/1999/xhtml"
+            xmlns:h="jakarta.faces.html"
+            xmlns:f="jakarta.faces.core"
+            xmlns:p="jakarta.faces.passthrough"
+            xmlns:jsf="jakarta.faces"
+            xmlns:ui="jakarta.faces.facelets"
+            >
+        <f:metadata>
+            <f:viewAction action="#{mega.init}" />
+        </f:metadata>
+        <h:head>
+            <title>0x08 Experiments: One-class Enterprise Application</title>
+            <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+            <!-- Chota! -->
+            <link rel="stylesheet" href="./chota.min.css" />
+        </h:head>
+        <h:body>
+            <header class="container">
+                <nav>
+                        <b>0x08 Experiments</b>:
+                        <small>One-class Enterprise Java EE Application</small>
+                </nav>
+            </header>
+            <main class="container">
+                <h:panelGroup layout="block" rendered="#{param['login']}">
+
+                    <h:form prependId="false" enctype="multipart/form-data">
+                        <input type="hidden" name="login" value="#{true}" />
+                        <legend>Authentication</legend>
+                        <h:messages globalOnly="true" infoClass="msg" errorClass="msg" />
+
+                        <div class="row">
+                        <div class="col-4">
+                                <label for="f_username">Username</label>
+                                <h:inputText  id="f_username"  size="20" p:placeholder="admin@test.org" value="#{mega.author}" />
+                                <h:message for="f_username" errorClass="msg" />
+
+                        </div>
+                        <div class="col-4">
+                                <label for="f_password">Password</label>
+                                <h:inputSecret  id="f_password"  size="20" p:placeholder="admin" value="#{mega.title}" />
+                                <h:message for="f_password" errorClass="msg" />
+
+                        </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <input class="button" type="submit" value="Login" jsf:action="#{mega.login}" />
+                                <h:button styleClass="button" value="Cancel" outcome="index" />
+
+                            </div>
+
+                        </div>
+
+                    </h:form>
+
+                </h:panelGroup>
+                <h:panelGroup layout="block" rendered="#{empty param['login'] and empty request.userPrincipal }">
+                    <h:form style="padding-bottom:1em;">
+
+                        <h:button value="Login" outcome="index?login=true"  styleClass="actBtn"/>
+                    </h:form>
+                </h:panelGroup>
+                <h:panelGroup layout="block" rendered="#{not empty request.userPrincipal}">
+                    Welcome,
+                    <h:outputText value="#{request.userPrincipal.name}"/>
+                    <p>
+                        <h:outputText rendered="#{request.isUserInRole('admin')}" value="user is admin"/>
+                    </p>
+                        <h:form>
+                            <h:commandButton value="Logout" action="#{mega.logout}" styleClass="actBtn">
+                            </h:commandButton>
+                        </h:form>
+                </h:panelGroup>
+                <h:panelGroup layout="block">
+                    Because this is the <b>Enterprise</b> Application, we provide both SOAP &amp; REST webservices for our guestbook:
+                    <h:outputLink value="#{request.contextPath}/MegaBeanService?wsdl" >JAX-WS WSDL</h:outputLink> |
+                    <h:outputLink value="#{request.contextPath}/api/application.wadl" >JAX-RS WADL</h:outputLink>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" rendered="#{param['login'] == null }">
+                    <h:form enctype="multipart/form-data">
+                        <fieldset>
+                            <legend>Mad 'enterprise level' guestbook</legend>
+                            <p>
+                                <h:messages globalOnly="true" infoClass="msg" errorClass="msg" />
+                            </p>
+                            <p>
+                                <label for="f_author">Author</label>
+                                <h:inputText id="f_author" value="#{mega.current.author}" size="20" p:placeholder="me@company.org"  />
+                                <h:message for="f_author" errorClass="msg" />
+                            </p>
+                            <p>
+                                <label for="f_title">Title</label>
+                                <h:inputText id="f_title" value="#{mega.current.title}" size="65" p:placeholder="Some fancy title" />
+                                <h:messages for="f_title"  errorClass="msg" />
+                            </p>
+                            <p>
+                                <label for="f_message">Message</label>
+                                <h:inputTextarea id="f_message" cols="80" rows="6" value="#{mega.current.message}"  p:placeholder="Tell us how much you love JEE"  />
+                                <h:message for="f_message" errorClass="msg" />
+                            </p>
+                            <p>
+                                <h:commandButton value="Send" action="#{mega.save}">
+                                </h:commandButton>
+                                <input type="reset"/>
+                            </p>
+                            <p style="font-size:small;">
+                                Running on <h:outputText value="#{versionLine}"/>
+                            </p>
+                        </fieldset>
+                    </h:form>
+                </h:panelGroup>
+                <p>
+                    <ui:repeat value="#{mega.fetchRecords()}" var="record">
+                        <div style="padding-top:2em;padding-bottom:1em;">
+                            <h:outputText value="#{record.author}"/> wrote:
+                        </div>
+                        <div style="padding-left: 2em; font-style: italic;">
+                            <h:outputText value="#{record.title}"/>
+                        </div>
+                        <div style="padding-left:4em;">
+                            <h:outputText value="#{record.message}"/>
+                        </div>
+                        <div style="width:80%;border-bottom: 1px solid black;">
+                            <div style="font-size: small;float: right;">
+                                At <h:outputText value="#{record.createdAt}"/>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </p>
+            </main>
+            <footer class="container">
+                <small>
+                    Created by Alex Chernyshev, 2021  @alex0x08
+                    <a href="https://0x08.ru">0x08.ru</a>
+                </small>
+            </footer>
+        </h:body> 
+    </f:view>
+</html>

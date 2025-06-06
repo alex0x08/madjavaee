@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web version="8.0" xmlns="http://www.jboss.com/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/schema/jbossas/jboss-web_8_0.xsd">
+  <context-root>/madjpa</context-root>
+  <!--
+
+  Wildfly require to be run with JDK 8 due to
+  java.lang.NoClassDefFoundError: java/security/acl/Group
+
+
+  The final step when using wildfly is defining the jaspitest security domain. Why? Because the JSR 375 works with JASPI and, therefore,
+  the application should be configured to use a JASPI capable security domain.
+  The default security domain other configured by wildfly is not JASPI.
+  In a common application the jboss-web.xml should be placed setting the module to use.
+https://developer.jboss.org/thread/278332
+  -->
+  <!--security-domain>jaspitest</security-domain>
+    Does not work anymore in Jakarta 10, need to add users manually (add-user.sh script)
+  -->
+</jboss-web>
